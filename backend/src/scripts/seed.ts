@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import User from '../models/User';
 import Pick from '../models/Pick';
+import Event from '../models/Event';
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ const seedDatabase = async () => {
     // Clear existing data
     await User.deleteMany({});
     await Pick.deleteMany({});
+    await Event.deleteMany({});
     console.log('🗑️  Cleared existing data');
 
     // Create users

@@ -1,6 +1,12 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
+export interface IUserStats {
+  totalPicks: number;
+  correctPicks: number;
+  winRate: number;
+}
+
 export interface IUser extends Document {
   username: string;
   email: string;
@@ -9,6 +15,7 @@ export interface IUser extends Document {
   followers: mongoose.Types.ObjectId[];
   following: mongoose.Types.ObjectId[];
   cloutScore: number;
+  stats?: IUserStats;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -56,6 +63,11 @@ const userSchema = new Schema<IUser>(
       type: Number,
       default: 0,
       min: 0
+    },
+    stats: {
+      totalPicks: { type: Number, default: 0 },
+      correctPicks: { type: Number, default: 0 },
+      winRate: { type: Number, default: 0 }
     }
   },
   {

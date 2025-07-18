@@ -25,7 +25,9 @@ export interface IVerifiedOutcome {
 
 export interface IPick extends Document {
   capperId: mongoose.Types.ObjectId;
-  fightEvent: IFightEvent;
+  eventId: mongoose.Types.ObjectId;
+  fightIndex: number; // Index of the fight in the event's fights array
+  fightEvent: IFightEvent; // Keep for backward compatibility
   prediction: IPrediction;
   analysis?: string;
   timestamp: Date;
@@ -43,6 +45,15 @@ const pickSchema = new Schema<IPick>(
       ref: 'User',
       required: true,
       index: true
+    },
+    eventId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Event',
+      index: true
+    },
+    fightIndex: {
+      type: Number,
+      min: 0
     },
     fightEvent: {
       eventName: {

@@ -67,8 +67,8 @@ export const getLeaderboard = async (
           followerCount: { $size: '$user.followers' },
           cloutScore: {
             $add: [
-              { $multiply: ['$winRate', 0.7] },
-              { $multiply: [{ $divide: [{ $size: '$user.followers' }, 1000] }, 0.3] }
+              { $multiply: ['$winRate', 70] },
+              { $min: [{ $divide: [{ $size: '$user.followers' }, 10] }, 30] }
             ]
           }
         }
@@ -194,7 +194,8 @@ export const getCapperStats = async (
       ? overallStats.correctPicks / overallStats.verifiedPicks
       : 0;
 
-    const cloutScore = (winRate * 0.7) + ((user.followers.length / 1000) * 0.3);
+    const socialScore = Math.min(user.followers.length / 10, 30);
+    const cloutScore = (winRate * 70) + socialScore;
 
     res.status(200).json({
       success: true,

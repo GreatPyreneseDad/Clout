@@ -2,6 +2,7 @@ import { useState, useEffect, createContext, useContext, ReactNode } from 'react
 import { User, LoginCredentials, RegisterData } from '@clout/shared';
 import { authService } from '../services/api';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 interface AuthContextType {
   user: User | null;
@@ -37,6 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(user));
         setUser(user);
+        toast.success('Welcome back!');
         navigate('/');
       } else {
         throw new Error(response.data.error || 'Login failed');
@@ -55,6 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(user));
         setUser(user);
+        toast.success('Account created successfully!');
         navigate('/');
       } else {
         throw new Error(response.data.error || 'Registration failed');
@@ -68,6 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     authService.logout();
     setUser(null);
+    toast.success('Logged out successfully');
     navigate('/login');
   };
 

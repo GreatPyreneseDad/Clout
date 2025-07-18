@@ -23,6 +23,8 @@ Backend (.env in /backend):
 MONGODB_URI=mongodb://localhost:27017/clout
 JWT_SECRET=your-secret-key-here
 PORT=3000
+NODE_ENV=development
+SPORTS_DB_API_KEY=3  # Optional: for sports data integration
 ```
 
 Frontend (.env in /frontend):
@@ -63,41 +65,70 @@ After seeding, you can login with:
 
 ## 🎮 Features
 
-### MVP Features (Current)
-- ✅ User registration (Capper/Bettor roles)
-- ✅ Create and publish fight picks
-- ✅ View pick feed
-- ✅ Leaderboard rankings
-- ✅ Basic user profiles
-- ✅ Mock fight data integration
+### Sprint 1 Features (Completed)
+- ✅ **Authentication**: JWT-based auth with login/signup endpoints
+- ✅ **Sports Data Integration**: Event model with fight data, mock API fallback
+- ✅ **Enhanced Clout Algorithm**: 70% win rate + 30% social (capped at 300 followers)
+- ✅ **Follow System**: Users can follow cappers, affects clout score
+- ✅ **Event Management**: Link picks to real events, auto-verification system
+- ✅ **Error Handling**: Global error middleware, frontend toast notifications
+- ✅ **Testing**: Jest tests for auth flows and clout calculation
+- ✅ **Enhanced Seed Data**: 20+ picks, events, and social connections
 
-### Planned Features
-- 🔄 Real-time fight results integration
-- 🔄 Social features (follow, like, comment)
-- 🔄 Advanced analytics dashboard
+### Next Sprint Features
+- 🔄 Real-time fight results from live APIs
+- 🔄 Comment system on picks
+- 🔄 Advanced analytics dashboard with charts
+- 🔄 Email notifications for followed cappers
 - 🔄 Mobile app (React Native)
-- 🔄 Expand to NFL, NBA, MLB
+- 🔄 Expand to other sports
 
 ## 📊 Data Models
 
 ### User
-- Username, email, role (capper/user)
-- Followers array
-- Clout score (computed metric)
+- Username, email, password (hashed)
+- Role: 'capper' | 'user'
+- Followers/following arrays
+- Stats: totalPicks, correctPicks, winRate
+- Clout score (computed: 70% accuracy + 30% social)
 
 ### Pick
-- Capper ID reference
-- Fight event details
-- Prediction (winner, method, odds)
-- Timestamp
-- Verified outcome
+- Capper reference
+- Event reference with fight index
+- Prediction: winner, method, round, confidence
+- Analysis text
+- Verified outcome with correctness
+- Likes array
+
+### Event
+- External ID, name, organization
+- Event date, venue, location
+- Fights array with fighter details
+- Status: upcoming/live/completed
+- Fight results for verification
 
 ### Leaderboard
-- Aggregated view of capper performance
-- Win rate calculation
-- Clout score (70% success + 30% social)
+- Dynamic aggregation pipeline
+- Ranks by clout score
+- Period filtering (all/month/week)
 
 ## 🧪 Testing
+
+### Running Tests
+```bash
+# Backend unit tests
+cd backend
+npm test
+
+# With coverage
+npm test -- --coverage
+```
+
+### Test Coverage
+- Authentication flows (signup, login)
+- Clout score calculation
+- Pick verification system
+- API endpoint validation
 
 Run tests with:
 ```bash
@@ -124,13 +155,36 @@ npm test
 
 ## 📝 API Documentation
 
-Base URL: `http://localhost:5000/api`
+Base URL: `http://localhost:3000/api`
 
-### Endpoints
-- `GET /health` - API health check
-- `POST /picks` - Create new pick (auth required)
-- `GET /picks/:id` - Get specific pick
-- `GET /leaderboard` - Get top 10 cappers
+### Authentication Endpoints
+- `POST /auth/signup` - Register new user
+  - Body: `{ username, email, password, role }`
+- `POST /auth/login` - Login user
+  - Body: `{ email, password }`
+  - Returns: JWT token
+
+### User Endpoints
+- `GET /users/:id` - Get user profile
+- `POST /users/:id/follow` - Follow user (auth required)
+- `POST /users/:id/unfollow` - Unfollow user (auth required)
+- `GET /users/:id/followers` - Get user's followers
+- `GET /users/:id/following` - Get who user follows
+
+### Pick Endpoints
+- `GET /picks` - Get pick feed (paginated)
+- `GET /picks/capper/:id` - Get capper's picks
+- `POST /picks` - Create new pick (capper only)
+- `POST /picks/:id/like` - Like a pick (auth required)
+
+### Event Endpoints
+- `GET /events` - Get upcoming/past events
+- `GET /events/:id` - Get specific event details
+- `POST /events/refresh` - Refresh events from API (admin)
+
+### Leaderboard Endpoints
+- `GET /leaderboard` - Get top cappers by clout score
+  - Query params: `?period=all|month|week`
 
 ## 🤝 Contributing
 

@@ -6,9 +6,11 @@ import rateLimit from 'express-rate-limit';
 import { connectDB } from './config/database';
 import { errorHandler } from './middleware/errorHandler';
 import healthRoutes from './routes/health.routes';
+import authRoutes from './routes/auth.routes';
 import pickRoutes from './routes/pick.routes';
 import leaderboardRoutes from './routes/leaderboard.routes';
 import userRoutes from './routes/user.routes';
+import eventRoutes from './routes/event.routes';
 
 // Load environment variables
 dotenv.config();
@@ -38,15 +40,24 @@ app.use('/api/', limiter);
 
 // Routes
 app.use('/api', healthRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/picks', pickRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
+app.use('/api/events', eventRoutes);
 
 // Error handling middleware (must be last)
 app.use(errorHandler);
 
+// Start cron jobs
+import { startVerificationJob, startEventFetchJob } from './jobs/verification.job';
+if (process.env.NODE_ENV !== 'test') {
+  startVerificationJob();
+  startEventFetchJob();
+}
+
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`=€ Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
+  console.log(`ðŸš€ Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
 });
