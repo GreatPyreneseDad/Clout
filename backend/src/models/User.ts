@@ -106,7 +106,7 @@ userSchema.virtual('followingCount').get(function() {
 // Ensure virtuals are included in JSON
 userSchema.set('toJSON', {
   virtuals: true,
-  transform: function(doc, ret) {
+  transform: function(doc: any, ret: any) {
     delete ret.password;
     delete ret.__v;
     return ret;

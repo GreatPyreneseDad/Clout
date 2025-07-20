@@ -113,7 +113,7 @@ export class VerificationService {
       });
 
       for (const event of completedEvents) {
-        await this.verifyPicksForEvent(event._id.toString());
+        await this.verifyPicksForEvent((event._id as any).toString());
       }
     } catch (error) {
       console.error('Error verifying all pending picks:', error);

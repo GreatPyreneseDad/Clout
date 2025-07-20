@@ -64,7 +64,7 @@ export const updatePick = async (
     }
 
     // Check ownership
-    if (pick.capperId.toString() !== req.user!._id.toString()) {
+    if (pick.capperId.toString() !== (req.user!._id as any).toString()) {
       throw new AppError('Not authorized to update this pick', 403);
     }
 
@@ -101,7 +101,7 @@ export const deletePick = async (
     }
 
     // Check ownership
-    if (pick.capperId.toString() !== req.user!._id.toString()) {
+    if (pick.capperId.toString() !== (req.user!._id as any).toString()) {
       throw new AppError('Not authorized to delete this pick', 403);
     }
 
@@ -207,11 +207,11 @@ export const likePick = async (
     }
 
     // Check if already liked
-    if (pick.likes.includes(req.user!._id)) {
+    if (pick.likes.includes(req.user!._id as any)) {
       throw new AppError('Pick already liked', 400);
     }
 
-    pick.likes.push(req.user!._id);
+    pick.likes.push(req.user!._id as any);
     await pick.save();
 
     res.status(200).json({
@@ -235,7 +235,7 @@ export const unlikePick = async (
       throw new AppError('Pick not found', 404);
     }
 
-    const likeIndex = pick.likes.indexOf(req.user!._id);
+    const likeIndex = pick.likes.indexOf(req.user!._id as any);
     if (likeIndex === -1) {
       throw new AppError('Pick not liked', 400);
     }

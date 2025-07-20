@@ -146,7 +146,7 @@ pickSchema.virtual('isPending').get(function() {
 // Ensure virtuals are included in JSON
 pickSchema.set('toJSON', {
   virtuals: true,
-  transform: function(doc, ret) {
+  transform: function(doc: any, ret: any) {
     delete ret.__v;
     return ret;
   }

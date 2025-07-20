@@ -146,7 +146,7 @@ const seedDatabase = async () => {
           .sort(() => Math.random() - 0.5)
           .slice(0, likeCount);
         
-        pick.likes = likers.map(u => u._id);
+        pick.likes = likers.map(u => u._id as any);
         await pick.save();
 
         picks.push(pick);
