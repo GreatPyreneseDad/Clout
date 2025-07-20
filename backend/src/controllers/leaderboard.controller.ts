@@ -48,3 +48,37 @@ export const getLeaderboard = async (
     next(error);
   }
 };
+
+export const getCapperStats = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { capperId } = req.params;
+    
+    const capper = await User.findOne({ 
+      _id: capperId, 
+      role: 'capper' 
+    }).select('username stats');
+    
+    if (!capper) {
+      throw new AppError('Capper not found', 404);
+    }
+    
+    res.status(200).json({
+      success: true,
+      data: {
+        capperId: capper._id,
+        username: capper.username,
+        totalPicks: capper.stats?.totalPicks || 0,
+        wins: capper.stats?.wins || 0,
+        losses: capper.stats?.losses || 0,
+        winRate: capper.stats?.winRate || 0,
+        cloutScore: capper.stats?.cloutScore || 0
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
