@@ -25,7 +25,7 @@ export const authService = {
     api.post<ApiResponse<AuthResponse>>('/auth/login', credentials),
   
   register: (data: RegisterData) => 
-    api.post<ApiResponse<AuthResponse>>('/auth/register', data),
+    api.post<ApiResponse<AuthResponse>>('/auth/signup', data),
   
   logout: () => {
     localStorage.removeItem('token');
