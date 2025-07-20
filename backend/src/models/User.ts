@@ -3,8 +3,11 @@ import bcrypt from 'bcryptjs';
 
 export interface IUserStats {
   totalPicks: number;
-  correctPicks: number;
+  correctPicks?: number;
+  wins?: number;
+  losses?: number;
   winRate: number;
+  cloutScore?: number;
 }
 
 export interface IUser extends Document {
