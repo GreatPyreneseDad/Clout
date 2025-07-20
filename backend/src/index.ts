@@ -41,6 +41,11 @@ app.use(cors({
       return callback(null, true);
     }
     
+    // Allow all Vercel preview deployments
+    if (origin.includes('.vercel.app')) {
+      return callback(null, true);
+    }
+    
     // Otherwise use the specific origin
     const allowedOrigins = [
       process.env.CORS_ORIGIN || 'http://localhost:5173',
