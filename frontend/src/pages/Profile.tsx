@@ -63,14 +63,14 @@ export function Profile() {
       if (isFollowing) {
         await userService.unfollowUser(userId!);
         setIsFollowing(false);
-        setProfile(prev => prev ? {
+        setProfile((prev: any) => prev ? {
           ...prev,
           followerCount: (prev.followerCount || 0) - 1
         } : null);
       } else {
         await userService.followUser(userId!);
         setIsFollowing(true);
-        setProfile(prev => prev ? {
+        setProfile((prev: any) => prev ? {
           ...prev,
           followerCount: (prev.followerCount || 0) + 1
         } : null);
