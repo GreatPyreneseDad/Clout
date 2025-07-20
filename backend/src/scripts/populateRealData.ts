@@ -54,8 +54,9 @@ async function populateRealData() {
           wins: 0,
           losses: 0,
           winRate: 0,
-          cloutScore: 50 // Starting clout
-        }
+          cloutScore: 0
+        },
+        cloutScore: 50 // Starting clout - this is a top-level field
       });
       
       // Add some followers
@@ -206,6 +207,9 @@ async function populateRealData() {
         winRate: wins / historicalPickCount,
         cloutScore: Math.round(50 + (wins / historicalPickCount * 100) - 50)
       };
+      
+      // Update cloutScore at top level
+      capper.cloutScore = Math.round(50 + (wins / historicalPickCount * 100) - 50);
       
       await capper.save();
       console.log(`✅ ${capper.username}: ${wins}W-${historicalPickCount - wins}L (${(wins/historicalPickCount*100).toFixed(1)}%)`);

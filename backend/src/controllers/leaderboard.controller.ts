@@ -16,8 +16,8 @@ export const getLeaderboard = async (
 
     // Simple approach - just get cappers with stats
     const cappers = await User.find({ role: 'capper', 'stats.totalPicks': { $gt: 0 } })
-      .select('username stats')
-      .sort({ 'stats.cloutScore': -1 })
+      .select('username stats cloutScore')
+      .sort({ 'cloutScore': -1 })
       .skip(skip)
       .limit(limit);
 
@@ -31,7 +31,7 @@ export const getLeaderboard = async (
       wins: capper.stats?.wins || 0,
       losses: capper.stats?.losses || 0,
       winRate: capper.stats?.winRate || 0,
-      cloutScore: capper.stats?.cloutScore || 0
+      cloutScore: capper.cloutScore || 0
     }));
 
     res.status(200).json({
@@ -60,7 +60,7 @@ export const getCapperStats = async (
     const capper = await User.findOne({ 
       _id: capperId, 
       role: 'capper' 
-    }).select('username stats');
+    }).select('username stats cloutScore');
     
     if (!capper) {
       throw new AppError('Capper not found', 404);
@@ -75,7 +75,7 @@ export const getCapperStats = async (
         wins: capper.stats?.wins || 0,
         losses: capper.stats?.losses || 0,
         winRate: capper.stats?.winRate || 0,
-        cloutScore: capper.stats?.cloutScore || 0
+        cloutScore: capper.cloutScore || 0
       }
     });
   } catch (error) {
