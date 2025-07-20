@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: clout-backend
+    env: node
+    buildCommand: npm install && cd backend && npm install && npm run build
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 18
