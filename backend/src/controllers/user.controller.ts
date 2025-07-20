@@ -256,7 +256,7 @@ export const getFollowers = async (
       pagination: {
         page,
         limit,
-        total: user.followerCount
+        total: (user as any).followerCount
       }
     });
   } catch (error) {
@@ -294,7 +294,7 @@ export const getFollowing = async (
       pagination: {
         page,
         limit,
-        total: user.followingCount
+        total: (user as any).followingCount
       }
     });
   } catch (error) {
