@@ -1,4 +1,5 @@
 {
   "buildCommand": "bash scripts/build-frontend.sh || bash ../scripts/build-frontend.sh || bash ../../scripts/build-frontend.sh",
-  "outputDirectory": "frontend/dist"
+  "outputDirectory": "dist",
+  "framework": null
 }

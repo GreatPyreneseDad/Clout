@@ -32,3 +32,14 @@ npm run build
 cd ..
 
 echo "Build completed successfully"
+echo "Current directory after build: $(pwd)"
+echo "Finding dist directories:"
+find . -name "dist" -type d
+echo "Contents of frontend/dist:"
+ls -la frontend/dist || echo "frontend/dist not found"
+
+# If we're not in the root, copy dist to where Vercel expects it
+if [ -d "frontend/dist" ] && [ ! -d "dist" ]; then
+  echo "Copying frontend/dist to ./dist for Vercel"
+  cp -r frontend/dist .
+fi
