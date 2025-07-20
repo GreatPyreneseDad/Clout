@@ -74,6 +74,16 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
+// Root health check
+app.get('/', (_req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    service: 'clout-backend',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
 // Routes
 app.use('/api', healthRoutes);
 app.use('/api/auth', authRoutes);
