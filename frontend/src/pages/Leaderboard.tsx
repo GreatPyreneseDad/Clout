@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { LeaderboardEntry } from '@clout/shared';
+import type { LeaderboardEntry } from '@clout/shared';
 import { leaderboardService } from '../services/api';
 import { Link } from 'react-router-dom';
 

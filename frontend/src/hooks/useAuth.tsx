@@ -1,6 +1,6 @@
 import { useState, useEffect, createContext, useContext } from 'react';
 import type { ReactNode } from 'react';
-import { User, LoginCredentials, RegisterData } from '@clout/shared';
+import type { User, LoginCredentials, RegisterData } from '@clout/shared';
 import { authService } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';

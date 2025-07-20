@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { User, Pick } from '@clout/shared';
+import type { User, Pick } from '@clout/shared';
 import { userService, pickService } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import { formatDistanceToNow } from 'date-fns';
@@ -30,8 +30,8 @@ export function Profile() {
       if (response.data.success && response.data.data) {
         setProfile(response.data.data);
         // Check if current user follows this profile
-        if (currentUser && currentUser.following) {
-          setIsFollowing(currentUser.following.includes(userId!));
+        if (currentUser && (currentUser as any).following) {
+          setIsFollowing((currentUser as any).following.includes(userId!));
         }
       }
     } catch (err) {

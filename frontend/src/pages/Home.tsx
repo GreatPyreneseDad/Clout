@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Pick, User } from '@clout/shared';
+import type { Pick, User } from '@clout/shared';
 import { pickService } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import { formatDistanceToNow } from 'date-fns';
