@@ -103,13 +103,20 @@ async function populateRealData() {
             capperId: capper._id,
             eventId: event._id,
             fightIndex: 0,
-            fighter: selectedFighter,
-            method: ['Decision', 'KO/TKO', 'Submission'][Math.floor(Math.random() * 3)],
-            confidence,
+            fightEvent: {
+              eventName: event.eventName,
+              date: event.eventDate,
+              fighters: [fight.fighter1.name, fight.fighter2.name],
+              organization: event.organization
+            },
+            prediction: {
+              winner: selectedFighter,
+              method: ['Decision', 'KO/TKO', 'Submission'][Math.floor(Math.random() * 3)] as any,
+              confidence: confidence / 10 // Convert to 1-10 scale
+            },
             analysis: `${capper.username} likes ${selectedFighter} in this matchup. ` +
                      `The odds suggest a competitive fight, but I see ${selectedFighter} ` +
                      `having the edge in this contest.`,
-            potentialPayout: Math.abs(fight.fighter1.odds) + Math.abs(fight.fighter2.odds),
             likes: []
           });
           
@@ -168,16 +175,26 @@ async function populateRealData() {
           capperId: capper._id,
           eventId: mockEvent._id,
           fightIndex: 0,
-          fighter: selectedFighter,
-          method: 'Decision',
-          confidence: 70 + Math.floor(Math.random() * 20),
+          fightEvent: {
+            eventName: mockEvent.eventName,
+            date: mockEvent.eventDate,
+            fighters: ['Fighter A', 'Fighter B'],
+            organization: 'UFC'
+          },
+          prediction: {
+            winner: selectedFighter,
+            method: 'Decision' as any,
+            confidence: (70 + Math.floor(Math.random() * 20)) / 10
+          },
           analysis: 'Historical pick',
-          potentialPayout: 250,
-          isWin,
-          verifiedAt: pastDate,
-          verifiedOutcome: mockEvent.fights[0].result,
-          likes: [],
-          likeCount: Math.floor(Math.random() * 100)
+          verifiedOutcome: {
+            winner: mockEvent.fights[0].result!.winner!,
+            method: mockEvent.fights[0].result!.method!,
+            round: mockEvent.fights[0].result!.round,
+            verifiedAt: pastDate,
+            isCorrect: isWin
+          },
+          likes: []
         });
       }
       
