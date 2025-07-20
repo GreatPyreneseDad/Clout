@@ -5,6 +5,12 @@ import dotenv from 'dotenv';
 import rateLimit from 'express-rate-limit';
 import { connectDB } from './config/database';
 import { errorHandler } from './middleware/errorHandler';
+
+// Import models to ensure they're registered with mongoose
+import './models/User';
+import './models/Pick';
+import './models/Event';
+
 import healthRoutes from './routes/health.routes';
 import authRoutes from './routes/auth.routes';
 import pickRoutes from './routes/pick.routes';

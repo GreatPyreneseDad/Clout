@@ -70,7 +70,10 @@ const userSchema = new Schema<IUser>(
     stats: {
       totalPicks: { type: Number, default: 0 },
       correctPicks: { type: Number, default: 0 },
-      winRate: { type: Number, default: 0 }
+      wins: { type: Number, default: 0 },
+      losses: { type: Number, default: 0 },
+      winRate: { type: Number, default: 0 },
+      cloutScore: { type: Number, default: 0 }
     }
   },
   {
