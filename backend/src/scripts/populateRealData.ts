@@ -60,7 +60,7 @@ async function populateRealData() {
       
       // Add some followers
       const followerCount = Math.floor(Math.random() * 300) + 50;
-      capper.followerCount = followerCount;
+      (capper as any).followerCount = followerCount;
       await capper.save();
       
       cappers.push({ user: capper, targetWinRate: capperData.winRate });
@@ -122,7 +122,7 @@ async function populateRealData() {
           
           // Add some random likes
           const likeCount = Math.floor(Math.random() * 50);
-          pick.likeCount = likeCount;
+          (pick as any).likeCount = likeCount;
           await pick.save();
           
           console.log(`✅ ${capper.username} picked ${selectedFighter} for ${event.eventName}`);
