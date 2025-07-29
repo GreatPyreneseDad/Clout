@@ -13,7 +13,7 @@ interface CapperStoreState {
   loadCapperData: (capperId: string) => Promise<void>;
 }
 
-export const useCapperStore = create<CapperStoreState>((set, get) => ({
+export const useCapperStore = create<CapperStoreState>((set) => ({
   cappers: new Map(),
   async loadCapperData(capperId: string) {
     const [capperRes, followersRes, picksRes] = await Promise.all([
