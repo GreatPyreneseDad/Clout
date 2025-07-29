@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import rateLimit from 'express-rate-limit';
 import { connectDB } from './config/database';
 import { errorHandler } from './middleware/errorHandler';
+import { csrfProtection, injectCSRFToken } from './middleware/csrf';
 
 // Import models to ensure they're registered with mongoose
 import './models/User';
@@ -17,6 +18,7 @@ import pickRoutes from './routes/pick.routes';
 import leaderboardRoutes from './routes/leaderboard.routes';
 import userRoutes from './routes/user.routes';
 import eventRoutes from './routes/event.routes';
+import adminRoutes from './routes/admin.routes';
 
 // Load environment variables
 dotenv.config();
@@ -91,6 +93,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/picks', pickRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/events', eventRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Error handling middleware (must be last)
 app.use(errorHandler);

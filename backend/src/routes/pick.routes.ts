@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
 import { protect, restrictTo } from '../middleware/auth';
+import { csrfProtection } from '../middleware/csrf';
 import {
   createPick,
   getPick,
@@ -44,13 +45,13 @@ router.get('/user/:userId', getPicksByUser);
 // Protected routes (require authentication)
 router.use(protect);
 
-// Capper-only routes
-router.post('/', restrictTo('capper'), pickValidation, createPick);
-router.patch('/:id', restrictTo('capper'), updatePick);
-router.delete('/:id', restrictTo('capper'), deletePick);
+// Capper-only routes with CSRF protection
+router.post('/', restrictTo('capper'), csrfProtection, pickValidation, createPick);
+router.patch('/:id', restrictTo('capper'), csrfProtection, updatePick);
+router.delete('/:id', restrictTo('capper'), csrfProtection, deletePick);
 
-// User interaction routes
-router.post('/:id/like', likePick);
-router.delete('/:id/like', unlikePick);
+// User interaction routes with CSRF protection
+router.post('/:id/like', csrfProtection, likePick);
+router.delete('/:id/like', csrfProtection, unlikePick);
 
 export default router;

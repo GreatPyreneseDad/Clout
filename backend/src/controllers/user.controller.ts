@@ -4,11 +4,16 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User';
 import { AuthRequest } from '../types';
 import { AppError } from '../middleware/errorHandler';
+import { generateCSRFToken } from '../middleware/csrf';
 
 const generateToken = (userId: string): string => {
+  if (!process.env.JWT_SECRET) {
+    throw new AppError('JWT_SECRET environment variable is not set', 500);
+  }
+  
   return jwt.sign(
     { id: userId },
-    process.env.JWT_SECRET || 'default-secret',
+    process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRE || '7d' } as jwt.SignOptions
   );
 };
@@ -79,10 +84,14 @@ export const login = async (
 
     // Generate token
     const token = generateToken(user._id.toString());
+    
+    // Generate CSRF token
+    const csrfToken = generateCSRFToken(user._id.toString());
 
     res.status(200).json({
       success: true,
       token,
+      csrfToken,
       data: {
         id: user._id,
         username: user.username,
