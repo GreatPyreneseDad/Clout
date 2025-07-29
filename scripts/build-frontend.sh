@@ -16,18 +16,18 @@ done
 
 echo "Found repository root at: $(pwd)"
 
-# Install root dependencies
-npm install
+# Install root dependencies (including devDependencies for TypeScript)
+npm install --production=false
 
 # Build shared module
 cd shared
-npm install
+npm install --production=false
 npm run build
 cd ..
 
 # Build frontend
 cd frontend
-npm install
+npm install --production=false
 npm run build
 cd ..
 

@@ -1,5 +1,6 @@
 {
-  "buildCommand": "bash scripts/build-frontend.sh || bash ../scripts/build-frontend.sh || bash ../../scripts/build-frontend.sh",
-  "outputDirectory": "dist",
-  "framework": null
+  "buildCommand": "npm install && cd shared && npm install && npm run build && cd ../frontend && npm install && npm run build",
+  "outputDirectory": "frontend/dist",
+  "framework": null,
+  "installCommand": "npm install --production=false"
 }
