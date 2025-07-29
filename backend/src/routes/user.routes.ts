@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
 import { protect } from '../middleware/auth';
+import { csrfProtection } from '../middleware/csrf';
 import {
   register,
   login,
@@ -21,7 +22,10 @@ const registerValidation = [
     .matches(/^[a-zA-Z0-9_]+$/)
     .withMessage('Username must be 3-30 characters, alphanumeric and underscore only'),
   body('email').isEmail().normalizeEmail(),
-  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+  body('password')
+    .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/)
+    .withMessage('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'),
   body('role').optional().isIn(['capper', 'user'])
 ];
 
@@ -38,11 +42,11 @@ router.post('/login', loginValidation, login);
 router.use(protect);
 
 router.get('/profile', getProfile);
-router.patch('/profile', updateProfile);
+router.patch('/profile', csrfProtection, updateProfile);
 
-// Follow/Unfollow routes
-router.post('/:userId/follow', followUser);
-router.delete('/:userId/follow', unfollowUser);
+// Follow/Unfollow routes with CSRF protection
+router.post('/:userId/follow', csrfProtection, followUser);
+router.delete('/:userId/follow', csrfProtection, unfollowUser);
 
 // Get followers/following lists
 router.get('/:userId/followers', getFollowers);

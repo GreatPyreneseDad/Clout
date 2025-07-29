@@ -14,7 +14,7 @@ export interface IUser extends Document {
   username: string;
   email: string;
   password: string;
-  role: 'capper' | 'user';
+  role: 'capper' | 'user' | 'admin';
   followers: mongoose.Types.ObjectId[];
   following: mongoose.Types.ObjectId[];
   cloutScore: number;
@@ -46,12 +46,24 @@ const userSchema = new Schema<IUser>(
     password: {
       type: String,
       required: [true, 'Password is required'],
-      minlength: [6, 'Password must be at least 6 characters'],
+      minlength: [8, 'Password must be at least 8 characters'],
+      validate: {
+        validator: function(password: string) {
+          // Check for at least one uppercase letter, one lowercase letter, one number, and one special character
+          const hasUpperCase = /[A-Z]/.test(password);
+          const hasLowerCase = /[a-z]/.test(password);
+          const hasNumber = /\d/.test(password);
+          const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+          
+          return hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
+        },
+        message: 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+      },
       select: false
     },
     role: {
       type: String,
-      enum: ['capper', 'user'],
+      enum: ['capper', 'user', 'admin'],
       default: 'user'
     },
     followers: [{

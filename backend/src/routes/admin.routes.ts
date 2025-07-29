@@ -1,10 +1,11 @@
 import { Router, Request, Response } from 'express';
 import { SportsDataService } from '../services/sportsData.service';
+import { protect, restrictTo } from '../middleware/auth';
 
 const router = Router();
 
-// Trigger event fetch manually
-router.post('/fetch-events', async (req: Request, res: Response) => {
+// Trigger event fetch manually - Admin only
+router.post('/fetch-events', protect, restrictTo('admin'), async (req: Request, res: Response) => {
   try {
     const sportsDataService = new SportsDataService();
     const events = await sportsDataService.fetchUpcomingEvents();

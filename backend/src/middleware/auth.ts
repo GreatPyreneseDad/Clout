@@ -23,9 +23,13 @@ export const protect = async (
     const token = authHeader.split(' ')[1];
 
     // Verify token
+    if (!process.env.JWT_SECRET) {
+      throw new AppError('JWT_SECRET environment variable is not set', 500);
+    }
+    
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET || 'default-secret'
+      process.env.JWT_SECRET
     ) as JwtPayload;
 
     // Get user from token
@@ -66,9 +70,14 @@ export const optionalAuth = async (
     }
 
     const token = authHeader.split(' ')[1];
+    
+    if (!process.env.JWT_SECRET) {
+      throw new AppError('JWT_SECRET environment variable is not set', 500);
+    }
+    
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET || 'default-secret'
+      process.env.JWT_SECRET
     ) as JwtPayload;
 
     const user = await User.findById(decoded.id).select('-password');
