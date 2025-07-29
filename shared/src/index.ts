@@ -16,7 +16,17 @@ export interface FightEvent {
   eventName: string;
   date: string;
   fighters: string[];
-  organization: 'UFC' | 'Bellator' | 'ONE' | 'PFL' | 'Boxing' | 'Other';
+  organization:
+    | 'UFC'
+    | 'Bellator'
+    | 'ONE'
+    | 'PFL'
+    | 'Boxing'
+    | 'NFL'
+    | 'NBA'
+    | 'MLB'
+    | 'Soccer'
+    | 'Other';
 }
 
 // Prediction types

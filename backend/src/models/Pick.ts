@@ -71,7 +71,18 @@ const pickSchema = new Schema<IPick>(
       organization: {
         type: String,
         required: true,
-        enum: ['UFC', 'Bellator', 'ONE', 'PFL', 'Boxing', 'Other']
+        enum: [
+          'UFC',
+          'Bellator',
+          'ONE',
+          'PFL',
+          'Boxing',
+          'NFL',
+          'NBA',
+          'MLB',
+          'Soccer',
+          'Other'
+        ]
       }
     },
     prediction: {
