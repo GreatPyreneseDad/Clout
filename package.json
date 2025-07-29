@@ -15,7 +15,7 @@
     "build": "npm run build:backend && npm run build:frontend",
     "build:backend": "cd backend && npm run build",
     "build:frontend": "cd frontend && npm run build",
-    "build:vercel": "cd shared && npm install && npm run build && cd ../frontend && npm install && npm run build",
+    "build:vercel": "npm install --production=false && cd shared && npm install --production=false && npm run build && cd ../frontend && npm install --production=false && npm run build",
     "build:render": "npm install && cd shared && npm install && npm run build && cd ../backend && npm install && npm run build",
     "start": "cd backend && npm start",
     "test": "npm run test:backend && npm run test:frontend",
