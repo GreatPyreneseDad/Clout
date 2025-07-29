@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:vercel": "cd .. && npm install --production=false && cd shared && npm install --production=false && npm run build && cd ../frontend && npm install --production=false && npm run build",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
