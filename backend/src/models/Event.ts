@@ -3,7 +3,17 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface IEvent extends Document {
   externalId: string; // TheSportsDB event ID
   eventName: string;
-  organization: 'UFC' | 'Bellator' | 'ONE' | 'PFL' | 'Boxing' | 'Other';
+  organization:
+    | 'UFC'
+    | 'Bellator'
+    | 'ONE'
+    | 'PFL'
+    | 'Boxing'
+    | 'NFL'
+    | 'NBA'
+    | 'MLB'
+    | 'Soccer'
+    | 'Other';
   eventDate: Date;
   venue: string;
   location: string;
@@ -72,7 +82,18 @@ const eventSchema = new Schema<IEvent>({
   },
   organization: {
     type: String,
-    enum: ['UFC', 'Bellator', 'ONE', 'PFL', 'Boxing', 'Other'],
+    enum: [
+      'UFC',
+      'Bellator',
+      'ONE',
+      'PFL',
+      'Boxing',
+      'NFL',
+      'NBA',
+      'MLB',
+      'Soccer',
+      'Other'
+    ],
     required: true
   },
   eventDate: {
