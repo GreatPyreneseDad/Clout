@@ -19,6 +19,7 @@ import leaderboardRoutes from './routes/leaderboard.routes';
 import userRoutes from './routes/user.routes';
 import eventRoutes from './routes/event.routes';
 import adminRoutes from './routes/admin.routes';
+import monitoringRoutes from './routes/monitoring.routes';
 
 // Load environment variables
 dotenv.config();
@@ -94,6 +95,7 @@ app.use('/api/picks', pickRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/monitoring', monitoringRoutes);
 
 // 404 handler for unmatched routes
 app.use((req, res, next) => {
