@@ -1,11 +1,21 @@
 services:
   - type: web
     name: clout-backend
-    env: node
-    buildCommand: npm install && cd backend && npm install && npm run build
+    runtime: node
+    repo: https://github.com/GreatPyreneseDad/Clout
+    buildCommand: cd backend && npm install && npm run build
     startCommand: cd backend && npm start
+    rootDir: .
     envVars:
       - key: NODE_ENV
         value: production
       - key: NODE_VERSION
         value: 18
+      - key: MONGODB_URI
+        sync: false # You'll need to add this manually
+      - key: JWT_SECRET
+        sync: false # You'll need to add this manually
+      - key: CORS_ORIGIN
+        value: https://clout-frontend.vercel.app # Update with your actual frontend URL
+      - key: ODDS_API_KEY
+        sync: false # You'll need to add this manually

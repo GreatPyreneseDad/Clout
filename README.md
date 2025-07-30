@@ -2,6 +2,17 @@
 
 A social platform for sports betting predictions focused on fight sports (UFC, MMA, Boxing).
 
+## Quick Deploy
+
+### Deploy Backend to Render
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/GreatPyreneseDad/Clout)
+
+After clicking, you'll need to add these environment variables:
+- `MONGODB_URI` - Your MongoDB connection string
+- `JWT_SECRET` - A secure secret key (generate with: `openssl rand -base64 32`)
+- `CORS_ORIGIN` - Your frontend URL (e.g., https://your-app.vercel.app)
+- `ODDS_API_KEY` - Your sports data API key
+
 ## Quick Start
 
 ### Prerequisites
