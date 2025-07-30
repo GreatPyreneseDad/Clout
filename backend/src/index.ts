@@ -95,6 +95,15 @@ app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/admin', adminRoutes);
 
+// 404 handler for unmatched routes
+app.use((req, res, next) => {
+  res.status(404).json({
+    success: false,
+    error: `Route ${req.method} ${req.originalUrl} not found`,
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Error handling middleware (must be last)
 app.use(errorHandler);
 
