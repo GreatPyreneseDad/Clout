@@ -12,7 +12,8 @@
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
     "seed": "tsx src/scripts/seedEnhanced.ts",
-    "seed:basic": "tsx src/scripts/seed.ts"
+    "seed:basic": "tsx src/scripts/seed.ts",
+    "test:connection": "tsx src/scripts/testConnection.ts"
   },
   "dependencies": {
     "@clout/shared": "file:../shared",
