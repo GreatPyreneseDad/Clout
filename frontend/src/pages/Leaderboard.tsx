@@ -73,11 +73,11 @@ export function Leaderboard() {
               <th className="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
                 Record
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
-                Followers
+              <th className="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider" title="Mean Brier score on stated confidence. Lower is better; 0.25 is a coin flip.">
+                Calibration
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
-                Clout Score
+              <th className="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider" title="Net units from a flat 1-unit bet at the odds quoted on each pick.">
+                Units
               </th>
             </tr>
           </thead>
@@ -109,8 +109,8 @@ export function Leaderboard() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-center">
                   <span className={`font-semibold ${
-                    entry.winRate >= 60 ? 'text-green-500' :
-                    entry.winRate >= 50 ? 'text-yellow-500' :
+                    entry.winRate >= 0.6 ? 'text-green-500' :
+                    entry.winRate >= 0.5 ? 'text-yellow-500' :
                     'text-red-500'
                   }`}>
                     {(entry.winRate * 100).toFixed(1)}%
@@ -120,11 +120,22 @@ export function Leaderboard() {
                   {entry.correctPicks}-{entry.totalPicks - entry.correctPicks}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-center">
-                  {entry.followerCount.toLocaleString()}
+                  {entry.brier === null || entry.brier === undefined ? (
+                    <span className="text-gray-500">—</span>
+                  ) : (
+                    <span className={`font-semibold ${
+                      entry.brier < 0.20 ? 'text-green-500' :
+                      entry.brier < 0.25 ? 'text-yellow-500' :
+                      'text-red-500'
+                    }`} title={`skill ${entry.brierSkill?.toFixed(2)} vs coin flip`}>
+                      {entry.brier.toFixed(3)}
+                    </span>
+                  )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-center">
-                  <span className="text-lg font-bold text-primary-500">
-                    {entry.cloutScore.toFixed(1)}
+                  <span className={`text-lg font-bold ${entry.unitsWon >= 0 ? 'text-green-500' : 'text-red-500'}`}
+                        title={`${entry.unitsGraded} picks with odds · ROI ${(entry.roi * 100).toFixed(1)}%`}>
+                    {entry.unitsWon >= 0 ? '+' : ''}{entry.unitsWon.toFixed(2)}u
                   </span>
                 </td>
               </tr>

@@ -1,58 +1,48 @@
+/**
+ * Recompute every capper's stats from their verified picks.
+ *
+ * Run after deploying the units/Brier scoring, or any time stats drift:
+ *   npx tsx src/scripts/updateStats.ts
+ *
+ * Idempotent. Reads picks, writes stats. Never touches picks.
+ */
 import { config } from 'dotenv';
 import mongoose from 'mongoose';
 import User from '../models/User';
 import Pick from '../models/Pick';
+import { computeStats } from '../services/scoring';
 
-// Load environment variables
 config();
 
-async function updateStats() {
-  try {
-    // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI!);
-    console.log('✅ Connected to MongoDB');
+async function updateStats(): Promise<void> {
+  await mongoose.connect(process.env.MONGODB_URI!);
+  console.log('connected');
 
-    // Get all cappers
-    const cappers = await User.find({ role: 'capper' });
-    
-    for (const capper of cappers) {
-      // Count picks for this capper
-      const totalPicks = await Pick.countDocuments({ capperId: capper._id });
-      const verifiedPicks = await Pick.countDocuments({ 
-        capperId: capper._id,
-        'verifiedOutcome.isCorrect': { $exists: true }
-      });
-      const wins = await Pick.countDocuments({ 
-        capperId: capper._id,
-        'verifiedOutcome.isCorrect': true
-      });
-      const losses = verifiedPicks - wins;
-      
-      // Calculate win rate and clout score
-      const winRate = verifiedPicks > 0 ? wins / verifiedPicks : 0.5;
-      const cloutScore = Math.round(50 + (winRate * 100) - 50);
-      
-      // Update user stats
-      capper.stats = {
-        totalPicks: totalPicks || 1,
-        wins: wins || 0,
-        losses: losses || 0,
-        winRate: winRate || 0.5,
-        cloutScore: cloutScore || 50
-      };
-      
-      await capper.save();
-      console.log(`✅ Updated ${capper.username}: ${wins}W-${losses}L (${(winRate * 100).toFixed(1)}%) - Clout: ${cloutScore}`);
-    }
+  const cappers = await User.find({ role: 'capper' });
+  for (const capper of cappers) {
+    const verified = await Pick.find({
+      capperId: capper._id,
+      'verifiedOutcome.isCorrect': { $exists: true },
+    }).select('prediction.odds prediction.confidence verifiedOutcome.isCorrect');
 
-    console.log('\n🎉 Stats updated successfully!');
+    const stats = computeStats(verified.map(p => ({
+      odds: p.prediction?.odds,
+      confidence: p.prediction?.confidence ?? 5,
+      isCorrect: Boolean(p.verifiedOutcome?.isCorrect),
+    })));
 
-  } catch (error) {
-    console.error('❌ Error:', error);
-  } finally {
-    await mongoose.disconnect();
-    console.log('👋 Disconnected from MongoDB');
+    capper.stats = { ...stats, correctPicks: stats.wins };
+    capper.cloutScore = stats.cloutScore;
+    await capper.save();
+
+    const sign = stats.unitsWon >= 0 ? '+' : '';
+    console.log(
+      `${capper.username.padEnd(20)} ${stats.wins}W-${stats.losses}L  ` +
+      `${sign}${stats.unitsWon.toFixed(2)}u over ${stats.unitsGraded} graded  ` +
+      `brier ${stats.brier.toFixed(3)} (skill ${stats.brierSkill.toFixed(2)})`
+    );
   }
+  await mongoose.disconnect();
 }
 
-updateStats();
+updateStats().catch(err => { console.error(err); process.exit(1); });

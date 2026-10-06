@@ -2,6 +2,7 @@ import Pick from '../models/Pick';
 import Event from '../models/Event';
 import User from '../models/User';
 import { SportsDataService } from './sportsData.service';
+import { addPick, CloutStats, EMPTY_STATS } from './scoring';
 
 export class VerificationService {
   private sportsDataService: SportsDataService;
@@ -43,7 +44,7 @@ export class VerificationService {
         await pick.save();
 
         // Update capper's stats
-        await this.updateCapperStats(pick.capperId.toString(), isCorrect);
+        await this.updateCapperStats(pick.capperId.toString(), pick, isCorrect);
       }
     } catch (error) {
       console.error('Error verifying picks:', error);
@@ -71,37 +72,29 @@ export class VerificationService {
     return true;
   }
 
-  private async updateCapperStats(capperId: string, isCorrect: boolean): Promise<void> {
+  private async updateCapperStats(capperId: string, pick: any, isCorrect: boolean): Promise<void> {
     try {
       const capper = await User.findById(capperId);
       if (!capper || capper.role !== 'capper') return;
 
-      // Update win/loss record
-      if (!capper.stats) {
-        capper.stats = { totalPicks: 0, correctPicks: 0, winRate: 0 };
-      }
+      const prev: CloutStats = { ...EMPTY_STATS, ...(capper.stats as any) };
+      // Older documents carry correctPicks but not wins; reconcile once.
+      if (!prev.wins && (capper.stats as any)?.correctPicks) prev.wins = (capper.stats as any).correctPicks;
+      if (!prev.losses && prev.totalPicks) prev.losses = prev.totalPicks - prev.wins;
 
-      capper.stats.totalPicks += 1;
-      if (isCorrect) {
-        capper.stats.correctPicks += 1;
-      }
-      capper.stats.winRate = capper.stats.correctPicks / capper.stats.totalPicks;
+      const next = addPick(prev, {
+        odds: pick.prediction?.odds,
+        confidence: pick.prediction?.confidence ?? 5,
+        isCorrect,
+      });
 
-      // Update clout score
-      await this.updateCloutScore(capper);
-      
+      capper.stats = { ...next, correctPicks: next.wins };
+      // Clout is net units. Followers are not part of it.
+      capper.cloutScore = next.cloutScore;
       await capper.save();
     } catch (error) {
       console.error('Error updating capper stats:', error);
     }
-  }
-
-  private async updateCloutScore(capper: any): Promise<void> {
-    // Clout formula: 70% accuracy + 30% social
-    const accuracy = capper.stats.winRate * 100;
-    const social = Math.min(capper.followers.length / 10, 30); // Cap social at 30 points
-    
-    capper.cloutScore = (accuracy * 0.7) + social;
   }
 
   async verifyAllPendingPicks(): Promise<void> {

@@ -70,8 +70,13 @@ export interface LeaderboardEntry {
   totalPicks: number;
   correctPicks: number;
   winRate: number;
+  unitsWon: number;        // net units at quoted odds, flat 1u stakes
+  unitsGraded: number;     // picks that carried odds
+  roi: number;             // unitsWon / unitsGraded
+  brier: number | null;    // mean (statedProb − outcome)²; lower is better
+  brierSkill: number | null; // 1 − brier/0.25; > 0 beats a coin flip
   followerCount: number;
-  cloutScore: number;
+  cloutScore: number;      // == unitsWon. Followers are not in it.
   rank: number;
 }
 
