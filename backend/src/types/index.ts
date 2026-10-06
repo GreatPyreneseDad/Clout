@@ -11,8 +11,13 @@ export interface LeaderboardEntry {
   totalPicks: number;
   correctPicks: number;
   winRate: number;
+  unitsWon: number;
+  unitsGraded: number;
+  roi: number;
+  brier: number | null;
+  brierSkill: number | null;
   followerCount: number;
-  cloutScore: number;
+  cloutScore: number;   // == unitsWon
   rank: number;
 }
 

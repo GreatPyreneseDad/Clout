@@ -17,7 +17,8 @@ export const getLeaderboard = async (
     // Simple approach - just get cappers with stats
     const cappers = await User.find({ role: 'capper', 'stats.totalPicks': { $gt: 0 } })
       .select('username stats cloutScore followers')
-      .sort({ 'cloutScore': -1 })
+      // Net units first; calibration breaks ties. Followers do not sort anything.
+      .sort({ 'stats.unitsWon': -1, 'stats.brier': 1 })
       .skip(skip)
       .limit(limit);
 
@@ -32,6 +33,11 @@ export const getLeaderboard = async (
       wins: capper.stats?.wins || 0,
       losses: capper.stats?.losses || 0,
       winRate: capper.stats?.winRate || 0,
+      unitsWon: capper.stats?.unitsWon || 0,
+      unitsGraded: capper.stats?.unitsGraded || 0,
+      roi: capper.stats?.roi || 0,
+      brier: capper.stats?.brier ?? null,
+      brierSkill: capper.stats?.brierSkill ?? null,
       cloutScore: capper.cloutScore || 0,
       followerCount: capper.followers?.length || 0
     }));
@@ -77,6 +83,11 @@ export const getCapperStats = async (
         wins: capper.stats?.wins || 0,
         losses: capper.stats?.losses || 0,
         winRate: capper.stats?.winRate || 0,
+        unitsWon: capper.stats?.unitsWon || 0,
+        unitsGraded: capper.stats?.unitsGraded || 0,
+        roi: capper.stats?.roi || 0,
+        brier: capper.stats?.brier ?? null,
+        brierSkill: capper.stats?.brierSkill ?? null,
         cloutScore: capper.cloutScore || 0
       }
     });

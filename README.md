@@ -79,11 +79,11 @@ After seeding, you can login with:
 ### Sprint 1 Features (Completed)
 - ✅ **Authentication**: JWT-based auth with login/signup endpoints
 - ✅ **Sports Data Integration**: Event model with fight data, mock API fallback
-- ✅ **Enhanced Clout Algorithm**: 70% win rate + 30% social (capped at 300 followers)
-- ✅ **Follow System**: Users can follow cappers, affects clout score
+- ✅ **Clout = units won**: flat 1u at the odds quoted; Brier calibration on stated confidence. Followers do not affect it. See *Scoring* below.
+- ✅ **Follow System**: Users can follow cappers
 - ✅ **Event Management**: Link picks to real events, auto-verification system
 - ✅ **Error Handling**: Global error middleware, frontend toast notifications
-- ✅ **Testing**: Jest tests for auth flows and clout calculation
+- ✅ **Testing**: Jest tests for auth flows and the scoring module (`backend/src/tests/scoring.test.ts`)
 - ✅ **Enhanced Seed Data**: 20+ picks, events, and social connections
 
 ### Next Sprint Features
@@ -119,9 +119,32 @@ After seeding, you can login with:
 - Fight results for verification
 
 ### Leaderboard
-- Dynamic aggregation pipeline
-- Ranks by clout score
+- Ranks by net units, ties broken by Brier score
 - Period filtering (all/month/week)
+
+## 📐 Scoring
+
+The original clout formula was `winRate × 70 + min(followers / 10, 30)`. It
+rewarded picking heavy favourites — a capper taking −400 chalk every fight runs
+80% and tops the board while losing money — and gave 30% of credibility to
+follower count. That formula is gone.
+
+Each verified pick now contributes two numbers (`backend/src/services/scoring.ts`):
+
+| metric | definition | reads |
+|---|---|---|
+| **units** | flat 1-unit bet at `prediction.odds`; win → decimal − 1, loss → −1 | what a bettor following this capper would have made |
+| **brier** | `(statedProb − outcome)²`, with confidence 1–10 → p = 0.5 + 0.045·c | whether the confidence slider means anything. 0.25 is a coin flip; lower is better |
+
+`cloutScore` **is** net units. ROI, graded-pick count and Brier skill
+(`1 − brier/0.25`) are exposed on `/leaderboard` and `/leaderboard/:capperId`.
+Picks without odds count toward win rate and Brier but are not graded for units.
+
+Worked example, in the tests: ten −400 favourites at 8–2 → 80% win rate,
+**0.00u**. Ten +250 underdogs at 4–6 → 40% win rate, **+4.00u**. The second
+capper ranks first.
+
+To backfill existing cappers after deploying: `cd backend && npx tsx src/scripts/updateStats.ts`.
 
 ## 🧪 Testing
 
@@ -194,7 +217,7 @@ Base URL: `http://localhost:3000/api`
 - `POST /events/refresh` - Refresh events from API (admin)
 
 ### Leaderboard Endpoints
-- `GET /leaderboard` - Get top cappers by clout score
+- `GET /leaderboard` - Top cappers by net units (ties: Brier)
   - Query params: `?period=all|month|week`
 
 ## 🤝 Contributing

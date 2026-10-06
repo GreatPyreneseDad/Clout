@@ -7,6 +7,13 @@ export interface IUserStats {
   wins?: number;
   losses?: number;
   winRate: number;
+  // units + calibration (see services/scoring.ts)
+  unitsWon?: number;
+  unitsGraded?: number;
+  roi?: number;
+  brierSum?: number;
+  brier?: number;
+  brierSkill?: number;
   cloutScore?: number;
 }
 
@@ -74,10 +81,10 @@ const userSchema = new Schema<IUser>(
       type: Schema.Types.ObjectId,
       ref: 'User'
     }],
+    // cloutScore == net units won at the odds quoted (flat 1u). Can be negative.
     cloutScore: {
       type: Number,
-      default: 0,
-      min: 0
+      default: 0
     },
     stats: {
       totalPicks: { type: Number, default: 0 },
@@ -85,6 +92,12 @@ const userSchema = new Schema<IUser>(
       wins: { type: Number, default: 0 },
       losses: { type: Number, default: 0 },
       winRate: { type: Number, default: 0 },
+      unitsWon: { type: Number, default: 0 },
+      unitsGraded: { type: Number, default: 0 },
+      roi: { type: Number, default: 0 },
+      brierSum: { type: Number, default: 0 },
+      brier: { type: Number, default: 0 },
+      brierSkill: { type: Number, default: 0 },
       cloutScore: { type: Number, default: 0 }
     }
   },
